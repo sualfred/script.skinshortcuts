@@ -56,7 +56,7 @@ def kodiwalk(path, stringForce = False):
 
 class LibraryFunctions():
     def __init__( self, *args, **kwargs ):
-        
+
         # Dictionary to make checking whether things are loaded easier
         self.loaded = { "common": [False, "common shortcuts"],
                 "more": [False, "more commands"],
@@ -71,9 +71,9 @@ class LibraryFunctions():
                 "upnp": [False, "upnp sources"],
                 "settings": [False, "settings"],
                 "widgets": [False, "widgets"] }
-        
+
         self.widgetPlaylistsList = []
-        
+
         # Empty dictionary for different shortcut types
         self.dictionaryGroupings = {"common":None,
                 "commands":None,
@@ -108,12 +108,12 @@ class LibraryFunctions():
         self.foldersCount = 0
 
         # Widget providers, for auto-installing
-        self.widgetProviders = [ [ "service.library.data.provider", None, "Library Data Provider" ], 
-                [ "script.extendedinfo", None, "ExtendedInfo Script" ], 
+        self.widgetProviders = [ [ "service.library.data.provider", None, "Library Data Provider" ],
+                [ "script.extendedinfo", None, "ExtendedInfo Script" ],
                 [ "service.smartish.widgets", "Skin.HasSetting(enable.smartish.widgets)", "Smart(ish) Widgets" ] ]
         self.allowWidgetInstall = False
         self.skinhelperWidgetInstall = True
-        
+
         self.useDefaultThumbAsIcon = None
 
     def loadLibrary( self, library ):
@@ -166,7 +166,7 @@ class LibraryFunctions():
         # Mark library type as loaded
         self.loaded[ library ][ 0 ] = True
         return True
-        
+
     def loadAllLibrary( self ):
         # Load all library data, for use with threading
         self.loadLibrary( "common" )
@@ -181,7 +181,7 @@ class LibraryFunctions():
         self.loadLibrary( "favourites" )
         self.loadLibrary( "settings" )
         self.loadLibrary( "widgets" )
-        
+
         # Do a JSON query for upnp sources (so that they'll show first time the user asks to see them)
         if self.loaded[ "upnp" ][ 0 ] == False:
             json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetDirectory", "params": { "properties": ["title", "file", "thumbnail"], "directory": "upnp://", "media": "files" } }')
@@ -190,7 +190,7 @@ class LibraryFunctions():
     # ==============================================
     # === BUILD/DISPLAY AVAILABLE SHORTCUT NODES ===
     # ==============================================
-    
+
     def retrieveGroup( self, group, flat = True, grouping = None ):
         trees = [DATA._get_overrides_skin(), DATA._get_overrides_script()]
         nodes = None
@@ -203,15 +203,15 @@ class LibraryFunctions():
                 nodes = tree.find( "groupings" )
             else:
                 nodes = tree.find( "%s-groupings" %( grouping ) )
-                
+
             if nodes is not None:
-                break                
-                
+                break
+
         if nodes is None:
             return [ "Error", [] ]
-            
+
         returnList = []
-        
+
         if flat:
             # Flat groupings
             count = 0
@@ -234,9 +234,9 @@ class LibraryFunctions():
                 if count == group:
                     # We found it :)
                     return( node.attrib.get( "label" ), self.buildNodeListing( node, True ) )
-                    
+
             return ["Error", []]
-            
+
         else:
             # Heirachical groupings
             if group == "":
@@ -248,13 +248,13 @@ class LibraryFunctions():
                 return [ windowTitle, self.buildNodeListing( nodes, False ) ]
             else:
                 groups = group.split( "," )
-                
+
                 nodes = [ "", nodes ]
                 for groupNum in groups:
                     nodes = self.getNode( nodes[1], int( groupNum ) )
-                    
+
                 return [ nodes[0], self.buildNodeListing( nodes[1], False ) ]
-                        
+
     def getNode( self, tree, number ):
         count = 0
         for subnode in tree:
@@ -277,7 +277,7 @@ class LibraryFunctions():
             if count == number:
                 label = DATA.local( subnode.attrib.get( "label" ) )[2]
                 return [ label, subnode ]
-                
+
     def buildNodeListing( self, nodes, flat ):
         returnList = []
         count = 0
@@ -314,20 +314,20 @@ class LibraryFunctions():
                 #returnList.append( self._create( [node.text, node.attrib.get( "label" ), node.attrib.get( "type" ), {"icon": node.attrib.get( "icon" )}] ) )
             if node.tag == "node" and flat == False:
                 returnList.append( self._create( ["||NODE||" + str( count ), node.attrib.get( "label" ), "", {"icon": "DefaultFolder.png"}] ) )
-                
+
         # Override icons
         tree = DATA._get_overrides_skin()
         for item in returnList:
             item = self._get_icon_overrides( tree, item, None )
 
         return returnList
-                
+
     def retrieveContent( self, content ):
         if content == "upnp-video":
             items = [ self._create(["||UPNP||", "32070", "32069", {"icon": "DefaultFolder.png"}]) ]
         elif content == "upnp-music":
             items = [ self._create(["||UPNP||", "32070", "32073", {"icon": "DefaultFolder.png"}]) ]
-            
+
         elif self.dictionaryGroupings[ content ] is None:
             # The data hasn't been loaded yet
             items = self.loadGrouping( content )
@@ -359,15 +359,15 @@ class LibraryFunctions():
                     widgetType = NODE.get_mediaType( path )
                     if widgetType != "unknown":
                         listitem.setProperty( "widgetType", widgetType )
-            
+
         # Check for any icon overrides for these items
         tree = DATA._get_overrides_skin()
-            
+
         for item in items:
             item = self._get_icon_overrides( tree, item, content )
-            
+
         return items
-            
+
     def checkForFolder( self, items ):
         # This function will check for any folders in the listings that are being returned
         # and, if found, move their sub-items into a property
@@ -381,9 +381,9 @@ class LibraryFunctions():
                 returnItems.append( newItem )
             else:
                 returnItems.append( item )
-            
+
         return( returnItems )
-        
+
     def loadGrouping( self, content ):
         # Display a busy dialog
         dialog = xbmcgui.DialogProgress()
@@ -417,11 +417,11 @@ class LibraryFunctions():
             self.loadLibrary( "settings" )
         if content == "widgets":
             self.loadLibrary( "widgets" )
-            
+
         # The data has now been loaded, return it
         dialog.close()
         return self.dictionaryGroupings[ content ]
-        
+
     def flatGroupingsCount( self ):
         # Return how many nodes there are in the the flat grouping
         tree = DATA._get_overrides_script()
@@ -437,22 +437,22 @@ class LibraryFunctions():
             if "version" in node.attrib:
                 if KODIVERSION != node.attrib.get( "version" ):
                     continue
-                    
+
             count += 1
-                
+
         return count
-        
-    
+
+
     def addToDictionary( self, group, content ):
         # This function adds content to the dictionaryGroupings - including
         # adding any skin-provided shortcuts to the group
         tree = DATA._get_overrides_skin()
-            
+
         # Search for skin-provided shortcuts for this group
         originalGroup = group
         if group.endswith( "-flat" ):
             group = group.replace( "-flat", "" )
-            
+
         if group not in [ "movie", "tvshow", "musicvideo" ]:
             for elem in tree.findall( "shortcut" ):
                 if "grouping" in elem.attrib:
@@ -462,24 +462,24 @@ class LibraryFunctions():
                         type = elem.attrib.get( "type" )
                         thumb = elem.attrib.get( "thumbnail" )
                         icon = elem.attrib.get( "icon" )
-                        
+
                         action = elem.text
-                        
+
                         #if label.isdigit():
                         #    label = "::LOCAL::" + label
-                            
+
                         if type is None:
                             type = "32024"
                         #elif type.isdigit():
                         #    type = "::LOCAL::" + type
-                        
+
                         if icon is None:
                             icon = ""
                         if thumb is None:
                             thumb = ""
 
                         listitem = self._create( [action, label, type, {"icon": icon, "thumb": thumb}] )
-                        
+
                         if "condition" in elem.attrib:
                             if xbmc.getCondVisibility( elem.attrib.get( "condition" ) ):
                                 content.insert( 0, listitem )
@@ -492,76 +492,76 @@ class LibraryFunctions():
                     type = elem.attrib.get( "type" )
                     thumb = elem.attrib.get( "thumbnail" )
                     icon = elem.attrib.get( "icon" )
-                    
+
                     action = elem.text
-                    
+
                     #if label.isdigit():
                     #    label = "::LOCAL::" + label
-                        
+
                     if type is None:
                         type = "32024"
                     #elif type.isdigit():
                     #    type = "::LOCAL::" + type
-                        
+
                     if type is None or type == "":
                         type = "Skin Provided"
-                        
+
                     if icon is None:
                         icon = ""
-                        
+
                     if thumb is None:
                         thumb = ""
 
                     listitem = self._create( [action, label, type, {"icon": icon, "thumb":thumb}] )
-                    
+
                     if "condition" in elem.attrib:
                         if xbmc.getCondVisibility( elem.attrib.get( "condition" ) ):
                             content.append( listitem )
                     else:
                         content.append( listitem )
-                    
+
         self.dictionaryGroupings[ originalGroup ] = content
-        
+
     # ================================
     # === BUILD AVAILABLE SHORTCUT ===
     # ================================
-    
+
     def _create ( self, item, allowOverrideLabel = True ):
         # Retrieve label
         localLabel = DATA.local( item[1] )[0]
-        
+
         # Create localised label2
         displayLabel2 = DATA.local( item[2] )[2]
         shortcutType = DATA.local( item[2] )[0]
-        
+
         if allowOverrideLabel:
             # Check for a replaced label
             replacementLabel = DATA.checkShortcutLabelOverride( item[0] )
             if replacementLabel is not None:
-                
+
                 localLabel = DATA.local( replacementLabel[0] )[0]
-                    
+
                 if len( replacementLabel ) == 2:
                     # We're also overriding the type
                     displayLabel2 = DATA.local( replacementLabel[1] )[2]
                     shortcutType = DATA.local( replacementLabel[1] )[0]
-                    
+
         # Try localising it
         displayLabel = DATA.local( localLabel )[2]
-        
+
         if displayLabel.startswith( "$NUMBER[" ):
             displayLabel = displayLabel[8:-1]
-        
+
         # Create localised label2
         displayLabel2 = DATA.local( displayLabel2 )[2]
         shortcutType = DATA.local( shortcutType )[0]
-        
+
         # If either displayLabel starts with a $, ask Kodi to parse it for us
         if displayLabel.startswith( "$" ):
             displayLabel = xbmc.getInfoLabel( displayLabel )
         if displayLabel2.startswith( "$" ):
             displayLabel2 = xbmc.getInfoLabel( displayLabel2 )
-            
+
         # If this launches our explorer, append a notation to the displayLabel
         noNonLocalized = False
         if item[0].startswith( "||" ):
@@ -573,7 +573,7 @@ class LibraryFunctions():
         # Get the items labelID
         DATA._clear_labelID()
         labelID = DATA._get_labelID( DATA.createNiceName( DATA.local( localLabel )[0], noNonLocalized = noNonLocalized ), item[0], noNonLocalized = noNonLocalized )
-            
+
         # Retrieve icon and thumbnail
         if item[3]:
             if "icon" in item[3].keys() and item[ 3 ][ "icon" ] is not None:
@@ -587,7 +587,7 @@ class LibraryFunctions():
         else:
             icon = "DefaultShortcut.png"
             thumbnail = None
-                        
+
         # Check if the option to use the thumb as the icon is enabled
         if self.useDefaultThumbAsIcon is None:
             # Retrieve the choice from the overrides.xml
@@ -600,31 +600,31 @@ class LibraryFunctions():
                     self.useDefaultThumbAsIcon = True
                 else:
                     self.useDefaultThumbAsIcon = False
-            
+
         usedDefaultThumbAsIcon = False
-        if self.useDefaultThumbAsIcon == True and thumbnail is not None:            
+        if self.useDefaultThumbAsIcon == True and thumbnail is not None:
             icon = thumbnail
             thumbnail = None
             usedDefaultThumbAsIcon = True
-            
+
         oldicon = None
-        
+
         # If the icon starts with a $, ask Kodi to parse it for us
         displayIcon = icon
         iconIsVar = False
         if icon.startswith( "$" ):
             displayIcon = xbmc.getInfoLabel( icon )
             iconIsVar = True
-        
+
         #special treatment for image resource addons
         if icon.startswith("resource://"):
             iconIsVar = True
-                        
+
         # If the skin doesn't have the icon, replace it with DefaultShortcut.png
         if ( not displayIcon or not xbmc.skinHasImage( displayIcon ) ) and not iconIsVar:
             if not usedDefaultThumbAsIcon:
                 displayIcon = "DefaultShortcut.png"
-                            
+
         # Build listitem
         if thumbnail is not None:
             listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2, iconImage=displayIcon, thumbnailImage=thumbnail)
@@ -637,16 +637,16 @@ class LibraryFunctions():
         listitem.setProperty( "icon", displayIcon )
         listitem.setProperty( "tempLabelID", labelID )
         listitem.setProperty( "defaultLabel", labelID )
-        
+
         if displayIcon != icon:
             listitem.setProperty( "untranslatedIcon", icon )
-        
+
         return( listitem )
-                
+
     def _get_icon_overrides( self, tree, item, content, setToDefault = True ):
         if tree is None:
             return item
-            
+
         oldicon = None
         newicon = item.getProperty( "icon" )
         for elem in tree.findall( "icon" ):
@@ -662,7 +662,7 @@ class LibraryFunctions():
                         # No group - change icon
                         oldicon = item.getProperty( "icon" )
                         newicon = elem.text
-                        
+
         # If the icon doesn't exist, set icon to default
         setDefault = False
         if not xbmc.skinHasImage( newicon ) and setToDefault == True:
@@ -673,18 +673,18 @@ class LibraryFunctions():
         if oldicon is not None:
             # we found an icon override
             item.setProperty( "icon", newicon )
-            item.setIconImage( newicon )
-            
+            item.setArt({'icon': 'newicon'})
+
         if setDefault == True:
             item = self._get_icon_overrides( tree, item, content, False )
-            
+
         return item
 
     # ===================================
     # === LOAD VIDEO LIBRARY HEIRACHY ===
     # ===================================
-    
-    def videolibrary( self ):           
+
+    def videolibrary( self ):
         # Try loading custom nodes first
         try:
             if self._parse_libraryNodes( "video", "custom" ) == False:
@@ -720,13 +720,13 @@ class LibraryFunctions():
         else:
             rootdir = os.path.join( xbmc.translatePath( "special://xbmc".decode('utf-8') ), "system", "library", library )
             log( "Listing default %s nodes..." %( library ) )
-            
+
         nodes = NODE.get_nodes( rootdir, prefix )
         if nodes == False or len( nodes ) == 0:
             return False
-        
+
         items = []
-        
+
         for key in nodes:
             # 0 = Label
             # 1 = Icon
@@ -734,11 +734,11 @@ class LibraryFunctions():
             # 3 = Type
             # 4 = Order
             # 5 = Media type (not folders...?)
-            
+
             #make sure the path ends with a trailing slash te prevent weird kodi behaviour
             if "/" in nodes[key][2] and not nodes[key][2].endswith("/"):
                 nodes[key][2] += "/"
-            
+
             if nodes[ key ][ 3 ] == "folder":
                 item = self._create( [ "%s%s" % ( action, nodes[ key ][ 2 ] ), nodes[ key ][ 0 ], nodes[ key ][ 3 ], { "icon": nodes[ key ][ 1 ] } ] )
             elif nodes[ key ][ 3 ] == "grouped":
@@ -749,17 +749,17 @@ class LibraryFunctions():
                 item.setProperty( "widgetType", nodes[ key ][ 5 ] )
                 item.setProperty( "widgetTarget", library )
             items.append( item )
-            
+
         self.addToDictionary( library, items )
-    
+
 
     # ============================
     # === LOAD OTHER LIBRARIES ===
     # ============================
-                
-    def common( self ):        
+
+    def common( self ):
         listitems = []
-        
+
         # Videos, Movies, TV Shows, Live TV, Music, Music Videos, Pictures, Weather, Programs,
         # Play dvd, eject tray
         # Settings, File Manager, Profiles, System Info
@@ -772,7 +772,7 @@ class LibraryFunctions():
 
         listitems.append( self._create(["ActivateWindow(TVGuide)", "32022", "32034", {"icon": "DefaultTVShows.png"} ]) )
         listitems.append( self._create(["ActivateWindow(RadioGuide)", "32087", "32034", {"icon": "DefaultTVShows.png"} ]) )
-        
+
         if int( KODIVERSION ) >= 18:
             listitems.append( self._create(["ActivateWindow(Music)", "2", "32034", {"icon": "DefaultMusicAlbums.png"} ]) )
         else:
@@ -787,7 +787,7 @@ class LibraryFunctions():
 
         listitems.append( self._create(["PlayDVD", "32032", "32034", {"icon": "DefaultDVDFull.png"} ] ) )
         listitems.append( self._create(["EjectTray()", "32033", "32034", {"icon": "DefaultDVDFull.png"} ] ) )
-                
+
         listitems.append( self._create(["ActivateWindow(Settings)", "10004", "32034", {"icon": "Settings.png"} ]) )
         listitems.append( self._create(["ActivateWindow(FileManager)", "7", "32034", {"icon": "DefaultFolder.png"} ] ) )
         listitems.append( self._create(["ActivateWindow(Profiles)", "13200", "32034", {"icon": "UnknownUser.png"} ] ) )
@@ -797,12 +797,12 @@ class LibraryFunctions():
             listitems.append( self._create(["ActivateWindow(EventLog,events://,return)", "14111", "32034", {"icon": "Events.png"} ]) )
 
         listitems.append( self._create(["ActivateWindow(Favourites)", "1036", "32034", {"icon": "Favourites.png"} ]) )
-            
+
         self.addToDictionary( "common", listitems )
-        
+
     def more( self ):
         listitems = []
-        
+
         listitems.append( self._create(["Reboot", "13013", "32054", {"icon": "Reboot.png"} ]) )
         listitems.append( self._create(["ShutDown", "13005", "32054", {"icon": "Shutdown.png"} ]) )
         listitems.append( self._create(["PowerDown", "13016", "32054", {"icon": "PowerDown.png"} ]) )
@@ -819,7 +819,7 @@ class LibraryFunctions():
         listitems.append( self._create(["Minimize", "13014", "32054", {"icon": "Minimize.png"} ]) )
 
         listitems.append( self._create(["Mastermode", "20045", "32054", {"icon": "Mastermode.png"} ]) )
-        
+
         listitems.append( self._create(["RipCD", "600", "32054", {"icon": "RipCD.png"} ]) )
 
         listitems.append( self._create(["UpdateLibrary(video,,true)", "32046", "32054", {"icon": "UpdateVideoLibrary.png"} ]) )
@@ -827,12 +827,12 @@ class LibraryFunctions():
 
         listitems.append( self._create(["CleanLibrary(video,true)", "32055", "32054", {"icon": "CleanVideoLibrary.png"} ]) )
         listitems.append( self._create(["CleanLibrary(music,true)", "32056", "32054", {"icon": "CleanMusicLibrary.png"} ]) )
-        
+
         self.addToDictionary( "commands", listitems )
-        
+
     def settings( self ):
         listitems = []
-        
+
         listitems.append( self._create(["ActivateWindow(Settings)", "10004", "10004", {"icon": "Settings.png"} ]) )
         listitems.append( self._create(["ActivateWindow(PVRSettings)", "19020", "10004", {"icon": "PVRSettings.png"} ]) )
         listitems.append( self._create(["ActivateWindow(AddonBrowser)", "24001", "10004", {"icon": "DefaultAddon.png"} ]) )
@@ -850,9 +850,9 @@ class LibraryFunctions():
             listitems.append( self._create(["ActivateWindow(PlayerSettings)", "14200", "10004", {"icon": "PlayerSettings.png"} ]) )
             listitems.append( self._create(["ActivateWindow(LibrarySettings)", "14202", "10004", {"icon": "LibrarySettings.png"} ]) )
             listitems.append( self._create(["ActivateWindow(InterfaceSettings)", "14206", "10004", {"icon": "InterfaceSettings.png"} ]) )
-        
+
         self.addToDictionary( "settings", listitems )
-    
+
     def pvrlibrary( self ):
         # PVR
         listitems = []
@@ -864,42 +864,42 @@ class LibraryFunctions():
         if int( KODIVERSION ) >= 17:
             listitems.append( self._create(["ActivateWindow(TVTimerRules)", "19138", "32017", {"icon": "DefaultTVShows.png"} ] ) )
         listitems.append( self._create(["ActivateWindow(TVSearch)", "137", "32017", {"icon": "DefaultTVShows.png"} ] ) )
-        
+
         listitems.append( self._create(["PlayPvrTV", "32066", "32017", {"icon": "DefaultTVShows.png"} ] ) )
         listitems.append( self._create(["PlayPvr", "32068", "32017", {"icon": "DefaultTVShows.png"} ] ) )
 
-        self.addToDictionary( "pvr", listitems )            
-        
+        self.addToDictionary( "pvr", listitems )
+
         # Add tv channels
         listitems = []
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "PVR.GetChannels", "params": { "channelgroupid": "alltv", "properties": ["thumbnail", "channeltype", "hidden", "locked", "channel", "lastplayed"] } }')
         json_query = unicode(json_query, 'utf-8', errors='ignore')
         json_response = simplejson.loads(json_query)
-        
+
         # Add all directories returned by the json query
         if json_response.has_key('result') and json_response['result'].has_key('channels') and json_response['result']['channels'] is not None:
             for item in json_response['result']['channels']:
                 listitems.append( self._create(["pvr-channel://" + str( item['channelid'] ), item['label'], "::SCRIPT::32076", {"icon": "DefaultTVShows.png", "thumb": item[ "thumbnail"]}]) )
-        
+
         self.addToDictionary( "pvr-tv", listitems )
-        
+
         # Add radio channels
         listitems = []
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "PVR.GetChannels", "params": { "channelgroupid": "allradio", "properties": ["thumbnail", "channeltype", "hidden", "locked", "channel", "lastplayed"] } }')
         json_query = unicode(json_query, 'utf-8', errors='ignore')
         json_response = simplejson.loads(json_query)
-        
+
         # Add all directories returned by the json query
         if json_response.has_key('result') and json_response['result'].has_key('channels') and json_response['result']['channels'] is not None:
             for item in json_response['result']['channels']:
                 listitems.append( self._create(["pvr-channel://" + str( item['channelid'] ), item['label'], "::SCRIPT::32077", {"icon": "DefaultTVShows.png", "thumb": item[ "thumbnail"]}]) )
-        
+
         log( "Found " + str( len( listitems ) ) + " radio channels" )
         self.addToDictionary( "pvr-radio", listitems )
-        
+
     def radiolibrary( self ):
         listitems = []
-        
+
         # PVR
         listitems.append( self._create(["ActivateWindow(RadioChannels)", "19019", "32087", {"icon": "DefaultAudio.png"} ] ) )
         listitems.append( self._create(["ActivateWindow(RadioGuide)", "22020", "32087", {"icon": "DefaultAudio.png"} ] ) )
@@ -908,13 +908,13 @@ class LibraryFunctions():
         if int( KODIVERSION ) >= 17:
             listitems.append( self._create(["ActivateWindow(RadioTimerRules)", "19138", "32087", {"icon": "DefaultAudio.png"} ] ) )
         listitems.append( self._create(["ActivateWindow(RadioSearch)", "137", "32087", {"icon": "DefaultAudio.png"} ] ) )
-        
+
         listitems.append( self._create(["PlayPvrRadio", "32067", "32087", {"icon": "DefaultAudio.png"} ] ) )
         listitems.append( self._create(["PlayPvr", "32068", "32087", {"icon": "DefaultAudio.png"} ] ) )
 
         self.addToDictionary( "radio", listitems )
 
-        
+
     def musiclibrary( self ):
         # Try loading custom nodes first
         try:
@@ -931,55 +931,55 @@ class LibraryFunctions():
                 # Empty library
                 log( "Failed to load default music nodes" )
                 print_exc()
-        
+
         # Do a JSON query for upnp sources (so that they'll show first time the user asks to see them)
         if self.loaded[ "upnp" ][ 0 ] == False:
             json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetDirectory", "params": { "properties": ["title", "file", "thumbnail"], "directory": "upnp://", "media": "files" } }')
             self.loaded[ "upnp" ][ 0 ] = True
-    
+
     def librarysources( self ):
         # Add video sources
         listitems = []
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetSources", "params": { "media": "video" } }')
         json_query = unicode(json_query, 'utf-8', errors='ignore')
         json_response = simplejson.loads(json_query)
-            
+
         # Add all directories returned by the json query
         if json_response.has_key('result') and json_response['result'].has_key('sources') and json_response['result']['sources'] is not None:
             for item in json_response['result']['sources']:
                 listitems.append( self._create(["||SOURCE||" + item['file'], item['label'], "32069", {"icon": "DefaultFolder.png"} ]) )
         self.addToDictionary( "videosources", listitems )
-        
+
         log( " - " + str( len( listitems ) ) + " video sources" )
-                
+
         # Add audio sources
         listitems = []
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetSources", "params": { "media": "music" } }')
         json_query = unicode(json_query, 'utf-8', errors='ignore')
         json_response = simplejson.loads(json_query)
-            
+
         # Add all directories returned by the json query
         if json_response.has_key('result') and json_response['result'].has_key('sources') and json_response['result']['sources'] is not None:
             for item in json_response['result']['sources']:
                 listitems.append( self._create(["||SOURCE||" + item['file'], item['label'], "32073", {"icon": "DefaultFolder.png"} ]) )
         self.addToDictionary( "musicsources", listitems )
-        
+
         log( " - " + str( len( listitems ) ) + " audio sources" )
-        
+
         # Add picture sources
         listitems = []
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetSources", "params": { "media": "pictures" } }')
         json_query = unicode(json_query, 'utf-8', errors='ignore')
         json_response = simplejson.loads(json_query)
-            
+
         # Add all directories returned by the json query
         if json_response.has_key('result') and json_response['result'].has_key('sources') and json_response['result']['sources'] is not None:
             for item in json_response['result']['sources']:
                 listitems.append( self._create(["||SOURCE||" + item['file'], item['label'], "32089", {"icon": "DefaultFolder.png"} ]) )
         self.addToDictionary( "picturesources", listitems )
-        
+
         log( " - " + str( len( listitems ) ) + " picture sources" )
-            
+
     def playlists( self ):
         audiolist = []
         videolist = []
@@ -993,7 +993,7 @@ class LibraryFunctions():
                     label = file['label']
                     playlistfile = xbmc.translatePath( playlist ).decode('utf-8')
                     mediaLibrary = path[2]
-                    
+
                     if playlist.endswith( '.xsp' ):
                         contents = xbmcvfs.File(playlistfile, 'r')
                         contents_data = contents.read().decode('utf-8')
@@ -1008,7 +1008,7 @@ class LibraryFunctions():
                                 elif mediaType == "albums" or mediaType == "artists" or mediaType == "songs":
                                     mediaLibrary = "Music"
                                     mediaContent = "music"
-                                
+
                             if line.tag == "name" and mediaLibrary is not None:
                                 name = line.text
                                 if not name:
@@ -1025,14 +1025,14 @@ class LibraryFunctions():
                                 listitem.setProperty( "widgetTarget", mediaContent )
                                 listitem.setProperty( "widgetName", name )
                                 listitem.setProperty( "widgetPath", playlist )
-                                
+
                                 if mediaLibrary == "Videos":
                                     videolist.append( listitem )
                                 else:
                                     audiolist.append( listitem )
                                 # Save it for the widgets list
                                 self.widgetPlaylistsList.append( [playlist, "(" + LANGUAGE( int( path[1] ) ) + ") " + name, name] )
-                                
+
                                 count += 1
                                 break
 
@@ -1055,17 +1055,17 @@ class LibraryFunctions():
                             listitem.setProperty( "widgetType", "songs" )
                             listitem.setProperty( "widgetTarget", "music" )
                             audiolist.append( listitem )
-                        
+
                         count += 1
                 except:
                     log( "Failed to load playlist: %s" %( file ) )
                     print_exc()
-                        
+
             log( " - [" + path[0] + "] " + str( count ) + " playlists found" )
-        
+
         self.addToDictionary( "playlist-video", videolist )
         self.addToDictionary( "playlist-audio", audiolist )
-                
+
     def scriptPlaylists( self ):
         # Lazy loading of random source playlists auto-generated by the script
         # (loaded lazily as these can be created/deleted after gui has loaded)
@@ -1078,33 +1078,33 @@ class LibraryFunctions():
                 playlist = file['path']
                 label = file['label']
                 playlistfile = xbmc.translatePath( playlist ).decode('utf-8')
-                
+
                 if playlist.endswith( '-randomversion.xsp' ):
                     contents = xbmcvfs.File(playlistfile, 'r')
                     contents_data = contents.read().decode('utf-8')
                     xmldata = xmltree.fromstring(contents_data.encode('utf-8'))
-                    for line in xmldata.getiterator():                               
+                    for line in xmldata.getiterator():
                         if line.tag == "name":
-                                
+
                             # Save it for the widgets list
                             # TO-DO - Localize display name
                             returnPlaylists.append( [playlist.encode( 'utf-8' ), "(Source) " + name, name] )
-                            
+
                             count += 1
                             break
-                        
+
             log( " - [" + path[0] + "] " + str( count ) + " playlists found" )
-            
+
         except:
             log( "Failed to load script generated playlists" )
             print_exc()
-            
+
         return returnPlaylists
-                
+
     def favourites( self ):
         listitems = []
         listing = None
-        
+
         fav_file = xbmc.translatePath( 'special://profile/favourites.xml' ).decode("utf-8")
         if xbmcvfs.exists( fav_file ):
             doc = parse( fav_file )
@@ -1114,7 +1114,7 @@ class LibraryFunctions():
             self.addToDictionary( "favourite", [] )
             self.loadedFavourites = True
             return True
-            
+
         for count, favourite in enumerate(listing):
             name = favourite.attributes[ 'name' ].nodeValue
             path = favourite.childNodes [ 0 ].nodeValue
@@ -1124,23 +1124,23 @@ class LibraryFunctions():
 
             try:
                 thumb = favourite.attributes[ 'thumb' ].nodeValue
-                
+
             except:
                 thumb = None
-            
+
             listitems.append( self._create( [ path, name, "32006", { "icon": "DefaultFolder.png", "thumb": thumb} ] ) )
-        
+
         log( " - " + str( len( listitems ) ) + " favourites found" )
-        
+
         self.addToDictionary( "favourite", listitems )
-        
+
     def addons( self ):
         executableItems = {}
         executablePluginItems = {}
         videoItems = {}
         audioItems = {}
         imageItems = {}
-                    
+
         contenttypes = [ ( "executable", executableItems ),  ( "video", videoItems ), ( "audio", audioItems ), ( "image", imageItems ) ]
         for contenttype, listitems in contenttypes:
             #listitems = {}
@@ -1156,21 +1156,21 @@ class LibraryFunctions():
             elif contenttype == "image":
                 contentlabel = LANGUAGE(32012)
                 shortcutType = "::SCRIPT::32012"
-                
+
             json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Addons.Getaddons", "params": { "content": "%s", "properties": ["name", "path", "thumbnail", "enabled"] } }' % contenttype)
             json_query = unicode(json_query, 'utf-8', errors='ignore')
             json_response = simplejson.loads(json_query)
-            
+
             if json_response.has_key('result') and json_response['result'].has_key('addons') and json_response['result']['addons'] is not None:
                 for item in json_response['result']['addons']:
-                    if item['enabled'] == True:                            
+                    if item['enabled'] == True:
                         path = "RunAddOn(" + item['addonid'].encode('utf-8') + ")"
                         action = None
                         thumb = "DefaultAddon.png"
                         if item['thumbnail'] != "":
                             thumb = item[ 'thumbnail' ]
-                        else:   
-                            thumb = None  
+                        else:
+                            thumb = None
                         listitem = self._create([path, item['name'], shortcutType, {"icon": "DefaultAddon.png", "thumb": thumb} ])
 
                         # If this is a plugin, mark that we can browse it
@@ -1204,7 +1204,7 @@ class LibraryFunctions():
 
                         # Save the listitem
                         listitems[ item[ "name" ] ] = listitem
-                        
+
             if contenttype == "executable":
                 self.addToDictionary( "addon-program", self.sortDictionary( listitems ) )
                 self.addToDictionary( "addon-program-plugin", self.sortDictionary( executablePluginItems ) )
@@ -1234,10 +1234,10 @@ class LibraryFunctions():
         except:
             print_exc()
         return []
-    
+
     def detectPluginContent(self, item):
         #based on the properties in the listitem we try to detect the content
-        
+
         if not item.has_key("showtitle") and not item.has_key("artist"):
             #these properties are only returned in the json response if we're looking at actual file content...
             # if it's missing it means this is a main directory listing and no need to scan the underlying listitems.
@@ -1259,7 +1259,7 @@ class LibraryFunctions():
                 return "albums"
             elif (item["type"] == "song" and not "play_album" in item["file"]) or (item["artist"] and item["album"]):
                 return "songs"
-        else:    
+        else:
             ##### VIDEO ITEMS ####
             if (item["showtitle"] and not item["artist"]):
                 #this is a tvshow, episode or season...
@@ -1280,7 +1280,7 @@ class LibraryFunctions():
     def widgets( self ):
         # Get widgets
         listitems = []
-        
+
         # Load skin overrides
         tree = DATA._get_overrides_skin()
         elems = tree.getroot().findall( "widget" )
@@ -1323,17 +1323,17 @@ class LibraryFunctions():
             listitems.append( listitem )
 
         self.addToDictionary( "widgets", listitems )
-        
+
     def sortDictionary( self, dictionary ):
         listitems = []
         for key in sorted( dictionary.keys() ): #, reverse = True):
             listitems.append( dictionary[ key ] )
         return listitems
-            
+
     # =============================
     # === ADDON/SOURCE EXPLORER ===
     # =============================
-    
+
     def explorer( self, history, location, label, thumbnail, itemType, isWidget = False ):
         isLibrary = False
         widgetType = None
@@ -1344,7 +1344,7 @@ class LibraryFunctions():
             dialogLabel = try_decode( label[0] ).replace( "  >", "" ) + " - " + try_decode( label[ -1 ] ).replace( "  >", "" )
 
         listings = []
-        
+
         tree = DATA._get_overrides_skin()
 
         # Shortcut to go 'up'
@@ -1355,30 +1355,30 @@ class LibraryFunctions():
             # This isn't the root, create a link to go up the heirachy
             listitem = self._create( [ "::BACK::", "..", "", {} ] )
         listings.append( listitem )
-            
-        
+
+
         # Default action - create shortcut (do not show when we're looking at the special entries from skinhelper service)
         if not "script.skin.helper.service" in location:
             createLabel = "32058"
             if isWidget:
                 createLabel = "32100"
             listings.append( self._get_icon_overrides( tree, self._create( ["::CREATE::", createLabel, "", {}] ), "" ) )
-                
+
         log( "Getting %s - %s" %( dialogLabel, try_decode( location ) ) )
-            
+
         # Show a waiting dialog, then get the listings for the directory
         dialog = xbmcgui.DialogProgress()
         dialog.create( dialogLabel, LANGUAGE( 32063 ) )
-        
+
         #we retrieve a whole bunch of properties, needed to guess the content type properly
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetDirectory", "params": { "properties": ["title", "file", "thumbnail", "episode", "showtitle", "season", "album", "artist", "imdbnumber", "firstaired", "mpaa", "trailer", "studio", "art"], "directory": "' + location + '", "media": "files" } }')
         json_query = unicode(json_query, 'utf-8', errors='ignore')
         json_response = simplejson.loads(json_query)
-            
+
         # Add all directories returned by the json query
         if json_response.has_key('result') and json_response['result'].has_key('files') and json_response['result']['files']:
             json_result = json_response['result']['files']
-            
+
             for item in json_result:
                 # Handle numeric labels
                 altLabel = item[ "label" ]
@@ -1407,7 +1407,7 @@ class LibraryFunctions():
                         thumb = None
                         if item[ "thumbnail" ] is not "":
                             thumb = item[ "thumbnail" ]
-                            
+
                         listitem = self._create( [ "ActivateWindow(%s,%s,return)" %( windowID, item[ "file" ] ), altLabel, "", {"icon": "DefaultFolder.png", "thumb": thumb} ] )
 
                         if item[ "file" ].endswith( ".xml/" ) and NODE.isGrouped( item[ "file" ] ):
@@ -1422,13 +1422,13 @@ class LibraryFunctions():
                         listitem.setProperty( "widgetPath", item[ "file" ] )
 
                         listings.append( self._get_icon_overrides( tree, listitem, "" ) )
-                
+
                 #some special code for smart shortcuts in script.skin.helper.service
                 elif item.get("title",None) == "smartshortcut":
 
-                    smartShortCutsData = eval(item.get("mpaa"))                  
+                    smartShortCutsData = eval(item.get("mpaa"))
                     thumb = smartShortCutsData["background"]
-                    
+
                     listitem = self._create( [ item[ "file" ], altLabel, "", {"icon": item.get("icon"), "thumb": thumb} ] )
                     # add all passed properties to the gui to set default background, widget etc.
                     properties = []
@@ -1445,7 +1445,7 @@ class LibraryFunctions():
                         listitem.setProperty( "widgetTarget", "videos" )
                     listitem.setProperty( "widgetPath", smartShortCutsData["list"] )
                     listings.append( self._get_icon_overrides( tree, listitem, "" ) )
-                    
+
                 else:
                     # Process this as a plugin
                     if item["filetype"] == "directory":
@@ -1462,7 +1462,7 @@ class LibraryFunctions():
                             else:
                                 if addonType != contentType and addonType != "mixed":
                                     addonType = "mixed"
-            
+
         # Close progress dialog
         dialog.close()
 
@@ -1477,7 +1477,7 @@ class LibraryFunctions():
             # Get more button
             log( "Selected get more button" )
             return self._explorer_install_widget_provider( history, history[ len( history ) -1 ], label, thumbnail, itemType, isWidget )
-        
+
         elif selectedItem != -1:
             selectedAction = listings[ selectedItem ].getProperty( "path" )
             if selectedAction == "::UP::":
@@ -1491,10 +1491,10 @@ class LibraryFunctions():
 
                 # Localize strings
                 localItemType = DATA.local( itemType )[2]
-                
+
                 # Create a listitem
                 listitem = xbmcgui.ListItem(label=label[ len( label ) - 1 ].replace( "  >", "" ), label2=localItemType, iconImage="DefaultShortcut.png", thumbnailImage=thumbnail[ len( thumbnail ) - 1 ])
-                
+
                 # Build the action
                 if itemType in [ "32010", "32014", "32069" ]:
                     action = 'ActivateWindow(Videos,"' + location + '",return)'
@@ -1532,7 +1532,7 @@ class LibraryFunctions():
                         listitem.setProperty( "widget", "Addon" )
                     if addonType is not None:
                         listitem.setProperty( "widgetType", addonType)
-                    
+
                     listitem.setProperty( "widgetTarget", "music" )
                     listitem.setProperty( "widgetName", dialogLabel )
                     listitem.setProperty( "widgetPath", location )
@@ -1547,7 +1547,7 @@ class LibraryFunctions():
                     listitem.setProperty( "widgetTarget", "pictures" )
                     listitem.setProperty( "widgetName", dialogLabel )
                     listitem.setProperty( "widgetPath", location )
-                    
+
                 elif itemType == "32009":
                     action = 'ActivateWindow(Programs,"' + location + '",return)'
                     listitem.setProperty( "windowID", "Programs" )
@@ -1571,16 +1571,16 @@ class LibraryFunctions():
                 else:
                     listitem.setProperty( "thumbnail", thumbnail[ len( thumbnail ) - 1 ] )
                 listitem.setProperty( "location", location )
-                
+
                 return listitem
-                
+
             elif selectedAction == "::BACK::":
                 # User is going up the heirarchy, remove current level and re-call this function
                 history.pop()
                 label.pop()
                 thumbnail.pop()
                 return self.explorer( history, history[ len( history ) -1 ], label, thumbnail, itemType, isWidget = isWidget )
-                
+
             elif selectedAction.startswith( "ActivateWindow(" ) or selectedAction.startswith( "$INFO" ):
                 # The user wants to create a shortcut to a specific shortcut listed
                 listitem = listings[ selectedItem ]
@@ -1592,7 +1592,7 @@ class LibraryFunctions():
                         listitem.setProperty( "widgetType", widgetType )
 
                 return listitem
-                
+
             else:
                 # User has chosen a sub-level to display, add details and re-call this function
                 history.append( selectedAction )
@@ -1698,22 +1698,22 @@ class LibraryFunctions():
             if xbmc.Monitor().waitForAbort(0.5):
                 return
 
-    
+
     # ======================
     # === AUTO-PLAYLISTS ===
     # ======================
-    
+
     def _sourcelink_choice( self, selectedShortcut ):
         # The user has selected a source. We're going to give them the choice of displaying it
         # in the files view, or view library content from the source
         dialog = xbmcgui.Dialog()
-        
+
         mediaType = None
         windowID = selectedShortcut.getProperty( "windowID" )
         # Check if we're going to display this in the files view, or the library view
         if windowID == "Videos":
             # Video library                               Files view       Movies           TV Shows         Music videos     Movies           TV Shows         Music Videos
-            userChoice = dialog.select( LANGUAGE(32078), [LANGUAGE(32079), LANGUAGE(32015), LANGUAGE(32016), LANGUAGE(32018), LANGUAGE(32081), LANGUAGE(32082), LANGUAGE(32083) ] )            
+            userChoice = dialog.select( LANGUAGE(32078), [LANGUAGE(32079), LANGUAGE(32015), LANGUAGE(32016), LANGUAGE(32018), LANGUAGE(32081), LANGUAGE(32082), LANGUAGE(32083) ] )
             if userChoice == -1:
                 return None
             elif userChoice == 0:
@@ -1743,7 +1743,7 @@ class LibraryFunctions():
                 negative = True
         elif windowID == "Music":
             # Music library                               Files view       Songs                         Albums                        Mixed                           Songs            Albums           Mixed
-            userChoice = dialog.select( LANGUAGE(32078), [LANGUAGE(32079), xbmc.getLocalizedString(134), xbmc.getLocalizedString(132), xbmc.getLocalizedString(20395), LANGUAGE(32084), LANGUAGE(32085), LANGUAGE(32086) ] )            
+            userChoice = dialog.select( LANGUAGE(32078), [LANGUAGE(32079), xbmc.getLocalizedString(134), xbmc.getLocalizedString(132), xbmc.getLocalizedString(20395), LANGUAGE(32084), LANGUAGE(32085), LANGUAGE(32086) ] )
             if userChoice == -1:
                 return None
             elif userChoice == 0:
@@ -1778,7 +1778,7 @@ class LibraryFunctions():
                 windowID = "10502"
                 negative = True
         else:
-            # Pictures                                         Files view           Slideshow                     Slideshow (random)                                                             Recursive slideshow             Recursive slideshow (random)    
+            # Pictures                                         Files view           Slideshow                     Slideshow (random)                                                             Recursive slideshow             Recursive slideshow (random)
             userChoice = dialog.select( LANGUAGE(32078), [ LANGUAGE(32079), xbmc.getLocalizedString(108), "%s (%s)" %( xbmc.getLocalizedString( 108 ), xbmc.getLocalizedString( 590 ) ), xbmc.getLocalizedString( 361 ), "%s (%s)" %( xbmc.getLocalizedString( 361 ), xbmc.getLocalizedString( 590 ) ) ] )
             if userChoice == -1:
                 return None
@@ -1801,21 +1801,21 @@ class LibraryFunctions():
                 selectedShortcut.setProperty( "path", newAction )
                 selectedShortcut.setProperty( "displayPath", newAction )
                 return selectedShortcut
-            
+
         # We're going to display it in the library
         filename = self._build_playlist( selectedShortcut.getProperty( "location" ), mediaType, selectedShortcut.getLabel(), negative )
         newAction = "ActivateWindow(" + windowID + "," +"special://profile/addon_data/" + ADDONID + "/" + filename + ",return)"
         selectedShortcut.setProperty( "Path", newAction )
         selectedShortcut.setProperty( "displayPath", newAction )
         return selectedShortcut
-    
+
     def _build_playlist( self, target, mediatype, name, negative ):
         # This function will build a playlist that displays the contents of a source in the library view
         # (that is to say, "path" "contains")
         tree = xmltree.ElementTree( xmltree.Element( "smartplaylist" ) )
         root = tree.getroot()
         root.set( "type", mediatype )
-        
+
         if target.startswith ( "multipath://" ):
             temp_path = target.replace( "multipath://", "" ).split( "%2f/" )
             target = []
@@ -1824,13 +1824,13 @@ class LibraryFunctions():
                     target.append( urllib.url2pathname( item ) )
         else:
             target = [target]
-        
+
         xmltree.SubElement( root, "name").text = name
         if negative == False:
             xmltree.SubElement( root, "match").text = "one"
         else:
             xmltree.SubElement( root, "match").text = "all"
-        
+
         for item in target:
             if negative == False:
                 rule = xmltree.SubElement( root, "rule")
@@ -1842,23 +1842,23 @@ class LibraryFunctions():
                 rule.set( "field", "path" )
                 rule.set( "operator", "doesnotcontain" )
                 xmltree.SubElement( rule, "value" ).text = item
-        
+
         id = 1
         while xbmcvfs.exists( os.path.join( DATAPATH, str( id ) + ".xsp" ) ) :
             id += 1
-                
+
         # Write playlist we'll link to the menu item
         DATA.indent( tree.getroot() )
         tree.write( os.path.join( DATAPATH, str( id ) + ".xsp" ), encoding="utf-8" )
-        
+
         # Add a random property, and save this for use in playlists/backgrounds
         order = xmltree.SubElement( root, "order" )
         order.text = "random"
         DATA.indent( tree.getroot() )
         tree.write( os.path.join( DATAPATH, str( id ) + "-randomversion.xsp" ), encoding="utf-8" )
-        
+
         return str( id ) + ".xsp"
-        
+
     def _delete_playlist( self, target ):
         # This function will check if the target links to an auto-generated playlist and, if so, delete it
         target = target
@@ -1868,13 +1868,13 @@ class LibraryFunctions():
                 if len( elements ) > 1:
                     if elements[1].startswith( "special://profile/addon_data/" + ADDONID + "/" ) and elements[1].endswith( ".xsp" ):
                         xbmcvfs.delete( xbmc.translatePath( elements[1] ) )
-                        xbmcvfs.delete( xbmc.translatePath( elements[1].replace( ".xsp", "-randomversion.xsp" ) ) )                        
+                        xbmcvfs.delete( xbmc.translatePath( elements[1].replace( ".xsp", "-randomversion.xsp" ) ) )
             except:
                 return
 
     def _rename_playlist( self, target, newLabel ):
         # This function changes the label tag of an auto-generated playlist
-        
+
         # First we will check that this is a playlist
         target = target
         if target.startswith( "ActivateWindow(" ):
@@ -1882,7 +1882,7 @@ class LibraryFunctions():
                 elements = target.split( "," )
             except:
                 return
-                    
+
             try:
                 if elements[1].startswith( "special://profile/addon_data/" + ADDONID + "/" ) and elements[1].endswith( ".xsp" ):
                     filename =  xbmc.translatePath( elements[1] )
@@ -1890,21 +1890,21 @@ class LibraryFunctions():
                     return
             except:
                 return
-                    
+
             # Load the tree and change the name
             tree = xmltree.parse( filename )
             name = tree.getroot().find( "name" )
             name.text = newLabel
-            
+
             # Write the tree
             DATA.indent( tree.getroot() )
             tree.write( filename, encoding="utf-8" )
-                    
+
             # Load the random tree and change the name
             tree = xmltree.parse( filename.replace( ".xsp", "-randomversion.xsp" ) )
             name = tree.getroot().find( "name" )
             name.text = newLabel
-            
+
             # Write the random tree
             DATA.indent( tree.getroot() )
             tree.write( filename.replace( ".xsp", "-randomversion.xsp" ), encoding="utf-8" )
@@ -1936,7 +1936,7 @@ class LibraryFunctions():
                         if image.endswith("/"):
                             image = image[:-1]
                     images.append( [image, label ] )
-                    
+
         return images
 
 # =====================================
@@ -1949,17 +1949,17 @@ class LibraryFunctions():
         isWidget = False
         if grouping == "widget":
             isWidget = True
-        
+
         if availableShortcuts is None:
             nodes = self.retrieveGroup( group, flat = False, grouping = grouping )
             availableShortcuts = nodes[1]
             windowTitle = nodes[0]
         else:
             availableShortcuts = self.checkForFolder( availableShortcuts )
-            
+
         if showNone is not False and group == "":
             availableShortcuts.insert( 0, self._create(["::NONE::", LANGUAGE(32053), "", {"icon":"DefaultAddonNone.png"}] ) )
-            
+
         if custom is not False and group == "":
             availableShortcuts.append( self._create(["||CUSTOM||", LANGUAGE(32024), "", {}] ) )
 
@@ -1973,7 +1973,7 @@ class LibraryFunctions():
         w.doModal()
         number = w.result
         del w
-        
+
         if number == -2:
             # Get more button
             log( "Selected get more button" )
@@ -2073,12 +2073,12 @@ class LibraryFunctions():
                 # Re-call this function
                 return self.selectShortcut( group = group, grouping = grouping, custom = custom, showNone = showNone, currentAction = currentAction )
 
-                   
+
             elif path == "||CUSTOM||":
                 # Let the user type a command
                 keyboard = xbmc.Keyboard( currentAction, LANGUAGE(32027), False )
                 keyboard.doModal()
-                
+
                 if ( keyboard.isConfirmed() ):
                     action = keyboard.getText()
                     if action != "":
@@ -2088,10 +2088,10 @@ class LibraryFunctions():
                         selectedShortcut.setProperty( "custom", "true" )
                     else:
                         selectedShortcut = None
-                            
+
                 else:
                     selectedShortcut = None
-                    
+
             elif path == "::NONE::":
                 # Create a really simple listitem to return
                 selectedShortcut = xbmcgui.ListItem( "::NONE::" )
@@ -2122,7 +2122,7 @@ class LibraryFunctions():
         reloadSplitter = "?"
         if "?" in widgetPath:
             reloadSplitter = "&"
-            
+
         # We have seperate reload params for each content type
         # default: refresh at every library change/video playback (widgetreload) + every 10 minutes (widgetreload2)
         reloadParam = "$INFO[Window(Home).Property(widgetreload)]$INFO[Window(Home).Property(widgetreload2)]"
@@ -2136,14 +2136,14 @@ class LibraryFunctions():
             reloadParam = "$INFO[Window(Home).Property(widgetreload-musicvideos)]"
         elif "music" in widgetPath or "song" in widgetPath:
             reloadParam = "$INFO[Window(Home).Property(widgetreload-music)]"
-            
+
         # And return it all
         return "%s%sreload=%s" %( widgetPath, reloadSplitter, reloadParam )
 
 # ============================
 # === PRETTY SELECT DIALOG ===
 # ============================
-            
+
 class ShowDialog( xbmcgui.WindowXMLDialog ):
     def __init__( self, *args, **kwargs ):
         xbmcgui.WindowXMLDialog.__init__( self )
