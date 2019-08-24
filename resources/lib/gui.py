@@ -368,7 +368,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
         # If there's an overriden icon, use it
         overridenIcon = item.find( "override-icon" )
         if overridenIcon is not None:
-            listitem.setArt({'icon': 'overridenIcon.text'})
+            listitem.setArt({'icon': overridenIcon.text})
             listitem.setProperty( "icon", overridenIcon.text )
             listitem.setProperty( "original-icon", icon )
 
