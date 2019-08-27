@@ -627,10 +627,10 @@ class LibraryFunctions():
 
         # Build listitem
         if thumbnail is not None:
-            listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2, iconImage=displayIcon, thumbnailImage=thumbnail)
+            listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2)
             listitem.setProperty( "thumbnail", thumbnail)
         else:
-            listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2, iconImage=thumbnail)
+            listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2)
         listitem.setProperty( "path", item[0] )
         listitem.setProperty( "localizedString", localLabel )
         listitem.setProperty( "shortcutType", shortcutType )
@@ -1493,7 +1493,7 @@ class LibraryFunctions():
                 localItemType = DATA.local( itemType )[2]
 
                 # Create a listitem
-                listitem = xbmcgui.ListItem(label=label[ len( label ) - 1 ].replace( "  >", "" ), label2=localItemType, iconImage="DefaultShortcut.png", thumbnailImage=thumbnail[ len( thumbnail ) - 1 ])
+                listitem = xbmcgui.ListItem(label=label[ len( label ) - 1 ].replace( "  >", "" ), label2=localItemType)
 
                 # Build the action
                 if itemType in [ "32010", "32014", "32069" ]:
@@ -2174,7 +2174,9 @@ class ShowDialog( xbmcgui.WindowXMLDialog ):
                 log( "Unable to set label for control 7" )
 
         for item in self.listing :
-            listitem = xbmcgui.ListItem(label=item.getLabel(), label2=item.getLabel2(), iconImage=item.getProperty( "icon" ), thumbnailImage=item.getProperty( "thumbnail" ))
+            listitem = xbmcgui.ListItem(label=item.getLabel(), label2=item.getLabel2())
+            listitem.setArt({'icon': item.getProperty("icon")})
+            listitem.setArt({'thumbnail': item.getProperty("thumbnail")})
             listitem.setProperty( "Addon.Summary", item.getLabel2() )
             self.fav_list.addItem( listitem )
 

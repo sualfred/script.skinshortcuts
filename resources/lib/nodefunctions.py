@@ -44,19 +44,19 @@ def log(txt):
             xbmc.log(msg=message.encode('utf-8'), level=xbmc.LOGDEBUG)
         except:
             pass
-    
+
 class NodeFunctions():
     def __init__(self):
         self.indexCounter = 0
-        
+
     ##############################################
     # Functions used by library.py to list nodes #
     ##############################################
-        
+
     def get_nodes( self, path, prefix ):
         dirs, files = xbmcvfs.listdir( path )
         nodes = {}
-        
+
         try:
             for dir in dirs:
                 self.parse_node( os.path.join( path, dir ), dir, nodes, prefix )
@@ -65,14 +65,14 @@ class NodeFunctions():
         except:
             print_exc()
             return False
-        
+
         return nodes
-        
+
     def parse_node( self, node, dir, nodes, prefix ):
         # If the folder we've been passed contains an index.xml, send that file to be processed
         if xbmcvfs.exists( os.path.join( node, "index.xml" ) ):
             self.parse_view( os.path.join( node, "index.xml" ), nodes, True, "%s/%s/" % ( prefix, dir ), node, prefix = prefix )
-    
+
     def parse_view( self, file, nodes, isFolder = False, origFolder = None, origPath = None, prefix = None ):
         if not isFolder and file.endswith( "index.xml" ):
             return
@@ -80,7 +80,7 @@ class NodeFunctions():
             # Load the xml file
             tree = xmltree.parse( file )
             root = tree.getroot()
-            
+
             # Get the item index
             if "order" in root.attrib:
                 index = root.attrib.get( "order" )
@@ -111,7 +111,7 @@ class NodeFunctions():
 
             # Get label and icon
             label = root.find( "label" ).text.encode( "utf-8" )
-            
+
             icon = root.find( "icon" )
             if icon is not None:
                 icon = icon.text.encode( "utf-8" )
@@ -127,7 +127,7 @@ class NodeFunctions():
                 if path is not None:
                     # Change the origPath (the url used as the shortcut address) to it
                     origPath = path.text.encode( "utf-8" )
-                    
+
                 # Check for a grouping
                 group = root.find( "group" )
                 if group is None:
@@ -138,13 +138,13 @@ class NodeFunctions():
                     nodes[ int( index ) ] = [ label, icon, origPath, "grouped", origIndex, mediaType ]
         except:
             print_exc()
-            
-    def isGrouped( self, path ):        
+
+    def isGrouped( self, path ):
         customPathVideo = path.replace( "library://video", os.path.join( xbmc.translatePath( "special://profile".decode('utf-8') ), "library", "video" ) )[:-1]
         defaultPathVideo = path.replace( "library://video", os.path.join( xbmc.translatePath( "special://xbmc".decode('utf-8') ), "system", "library", "video" ) )[:-1]
         customPathAudio = path.replace( "library://music", os.path.join( xbmc.translatePath( "special://profile".decode('utf-8') ), "library", "music" ) )[:-1]
         defaultPathAudio = path.replace( "library://music", os.path.join( xbmc.translatePath( "special://xbmc".decode('utf-8') ), "system", "library", "music" ) )[:-1]
-        
+
         paths = [ customPathVideo, defaultPathVideo, customPathAudio, defaultPathAudio ]
         foundPath = False
 
@@ -155,7 +155,7 @@ class NodeFunctions():
                 break
         if foundPath == False:
             return False
-        
+
         # Open the file
         try:
             # Load the xml file
@@ -173,7 +173,7 @@ class NodeFunctions():
     #####################################
     # Function used by DataFunctions.py #
     #####################################
-            
+
     def get_visibility( self, path ):
         path = path.replace( "videodb://", "library://video/" )
         path = path.replace( "musicdb://", "library://music/" )
@@ -260,7 +260,7 @@ class NodeFunctions():
         customFile = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://profile".decode('utf-8') ), "library", pathEnd ) )[:-1] + ".xml"
         defaultPath = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://xbmc".decode('utf-8') ), "system", "library", pathEnd ) ) + "index.xml"
         defaultFile = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://xbmc".decode('utf-8') ), "system", "library", pathEnd ) )[:-1] + ".xml"
-        
+
         # Check whether the node exists - either as a parent node (with an index.xml) or a view node (append .xml)
         # in first custom video nodes, then default video nodes
         if xbmcvfs.exists( customPath ):
@@ -273,7 +273,7 @@ class NodeFunctions():
             path = defaultFile
         else:
             return "unknown"
-            
+
         # Open the file
         try:
             # Load the xml file
@@ -294,7 +294,7 @@ class NodeFunctions():
 
         except:
             return "unknown"
-            
+
     ##################################################
     # Functions to externally add a node to the menu #
     ##################################################
@@ -324,7 +324,7 @@ class NodeFunctions():
         path = try_decode( path )
         label = try_decode( label )
         icon = try_decode( icon )
-        
+
         # Add all directories returned by the json query
         if json_response.has_key('result') and json_response['result'].has_key('files') and json_response['result']['files'] is not None:
             labels = [ LANGUAGE(32058) ]
@@ -370,7 +370,7 @@ class NodeFunctions():
         DATA._clear_labelID()
         for menuitem in menuitems.findall( "shortcut" ):
             # Get existing items labelID's
-            allMenuItems.append( xbmcgui.ListItem(label=DATA.local( menuitem.find( "label" ).text )[2], iconImage=menuitem.find( "icon" ).text) )
+            allMenuItems.append(xbmcgui.ListItem(label=DATA.local( menuitem.find( "label" ).text )[2]))
             allLabelIDs.append( DATA._get_labelID( DATA.local( menuitem.find( "label" ).text )[3], menuitem.find( "action" ).text ) )
 
         # Close progress dialog
@@ -381,7 +381,7 @@ class NodeFunctions():
         w.doModal()
         selectedMenu = w.result
         del w
-        
+
         if selectedMenu == -1 or selectedMenu is None:
             # User cancelled
             return
@@ -394,7 +394,7 @@ class NodeFunctions():
         if len( paths ) > 1:
             # There are multiple actions to choose from
             selectedAction = xbmcgui.Dialog().select( LANGUAGE( 32095 ), labels )
-            
+
             if selectedAction == -1 or selectedAction is None:
                 # User cancelled
                 return True
@@ -405,10 +405,10 @@ class NodeFunctions():
         # Load existing main menu items
         menuitems = DATA._get_shortcuts( allLabelIDs[ selectedMenu ], processShortcuts = False )
         DATA._clear_labelID()
-            
+
         # Generate a new labelID
         newLabelID = DATA._get_labelID( label, action )
-        
+
         # Write the updated mainmenu.DATA.xml
         newelement = xmltree.SubElement( menuitems.getroot(), "shortcut" )
         xmltree.SubElement( newelement, "label" ).text = label
@@ -416,7 +416,7 @@ class NodeFunctions():
         xmltree.SubElement( newelement, "icon" ).text = icon
         xmltree.SubElement( newelement, "thumb" )
         xmltree.SubElement( newelement, "action" ).text = action
-        
+
         DATA.indent( menuitems.getroot() )
         path = xbmc.translatePath( os.path.join( "special://profile", "addon_data", ADDONID, "%s.DATA.xml" %( DATA.slugify( allLabelIDs[ selectedMenu ], True ) ) ).encode('utf-8') )
         menuitems.write( path, encoding="UTF-8" )
@@ -424,7 +424,7 @@ class NodeFunctions():
         if isNode and selectedMenu == 1:
             # We're also going to write a submenu
             menuitems = xmltree.ElementTree( xmltree.Element( "shortcuts" ) )
-            
+
             for item in json_response['result']['files']:
                 if item[ "filetype" ] == "directory":
                     newelement = xmltree.SubElement( menuitems.getroot(), "shortcut" )
@@ -433,14 +433,14 @@ class NodeFunctions():
                     xmltree.SubElement( newelement, "icon" ).text = item[ "thumbnail" ]
                     xmltree.SubElement( newelement, "thumb" )
                     xmltree.SubElement( newelement, "action" ).text = "ActivateWindow(%s,%s,return)" %( window, item[ "file" ] )
-                
+
             DATA.indent( menuitems.getroot() )
             path = xbmc.translatePath( os.path.join( "special://profile", "addon_data", ADDONID, DATA.slugify( newLabelID, True ) + ".DATA.xml" ).encode('utf-8') )
             menuitems.write( path, encoding="UTF-8" )
-        
+
         # Mark that the menu needs to be rebuilt
         xbmcgui.Window( 10000 ).setProperty( "skinshortcuts-reloadmainmenu", "True" )
-        
+
         # And tell the user it all worked
         xbmcgui.Dialog().ok( ADDON.getAddonInfo( "name" ), LANGUAGE(32090) )
 
@@ -535,7 +535,7 @@ class NodeFunctions():
             for saveLabelID in allProps[ saveGroup ]:
                 for saveProperty in allProps[ saveGroup ][ saveLabelID ]:
                     saveData.append( [ saveGroup, saveLabelID, saveProperty, allProps[ saveGroup ][ saveLabelID ][ saveProperty ] ] )
-        
+
         # Save the new properties
         try:
             f = xbmcvfs.File( os.path.join( DATAPATH , xbmc.getSkinDir().decode('utf-8') + ".properties" ), 'w' )
@@ -563,7 +563,7 @@ class NodeFunctions():
 # ============================
 # === PRETTY SELECT DIALOG ===
 # ============================
-            
+
 class ShowDialog( xbmcgui.WindowXMLDialog ):
     def __init__( self, *args, **kwargs ):
         xbmcgui.WindowXMLDialog.__init__( self )
@@ -594,7 +594,7 @@ class ShowDialog( xbmcgui.WindowXMLDialog ):
                 log( "Unable to set label for control 7" )
 
         for item in self.listing :
-            listitem = xbmcgui.ListItem(label=item.getLabel(), label2=item.getLabel2(), iconImage=item.getProperty( "icon" ), thumbnailImage=item.getProperty( "thumbnail" ))
+            listitem = xbmcgui.ListItem(label=item.getLabel(), label2=item.getLabel2())
             listitem.setProperty( "Addon.Summary", item.getLabel2() )
             self.fav_list.addItem( listitem )
 
