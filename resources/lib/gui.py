@@ -306,6 +306,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
         # If there are no shortcuts, add a blank one
         if visible == False:
             listitem = xbmcgui.ListItem(LANGUAGE(32013))
+            listitem.setArt({'icon': "DefaultShortcut.png"})
             listitem.setProperty( "Path", 'noop' )
             listitem.setProperty( "icon", "DefaultShortcut.png" )
             listitem.setProperty( "skinshortcuts-orderindex", str( count ) )
@@ -345,6 +346,8 @@ class GUI( xbmcgui.WindowXMLDialog ):
 
         # Create the list item
         listitem = xbmcgui.ListItem(label=localLabel[2], label2 = localLabel2[2])
+        listitem.setArt({'icon': xbmc.getInfoLabel("icon")})
+        listitem.setArt({'thumbnail': xbmc.getInfoLabel("thumbnail")})
         listitem.setProperty( "localizedString", localLabel[0] )
         listitem.setProperty( "icon", icon )
         listitem.setProperty( "thumbnail", thumb )
@@ -2174,6 +2177,8 @@ class GUI( xbmcgui.WindowXMLDialog ):
 
     def _duplicate_listitem( self, listitem, originallistitem = None ):
         # Create a copy of an existing listitem
+        listitem.setArt({'icon': listitem.getProperty("icon")})
+        listitem.setArt({'thumbnail': listitem.getProperty("thumbnail")})
         listitemCopy = xbmcgui.ListItem(label=listitem.getLabel(), label2=listitem.getLabel2())
         listitemCopy.setProperty( "path", listitem.getProperty("path") )
         listitemCopy.setProperty( "displaypath", listitem.getProperty("path") )

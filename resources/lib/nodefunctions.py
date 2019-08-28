@@ -371,6 +371,7 @@ class NodeFunctions():
         for menuitem in menuitems.findall( "shortcut" ):
             # Get existing items labelID's
             allMenuItems.append(xbmcgui.ListItem(label=DATA.local( menuitem.find( "label" ).text )[2]))
+            listitem.setArt({'icon': menuitem.find("icon").text})
             allLabelIDs.append( DATA._get_labelID( DATA.local( menuitem.find( "label" ).text )[3], menuitem.find( "action" ).text ) )
 
         # Close progress dialog
