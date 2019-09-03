@@ -629,11 +629,11 @@ class LibraryFunctions():
         if thumbnail is not None:
             listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2)
             listitem.setArt({'icon': displayIcon})
-            listitem.setArt({'thumb': thumb})
-            listitem.setProperty( "thumbnail", thumb)
+            listitem.setArt({'thumb': thumbnail})
+            listitem.setProperty( "thumbnail", "thumb")
         else:
             listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2)
-            listitem.setArt({'icon': thumb})
+            listitem.setArt({'icon': thumbnail})
         listitem.setProperty( "path", item[0] )
         listitem.setProperty( "localizedString", localLabel )
         listitem.setProperty( "shortcutType", shortcutType )
@@ -1174,7 +1174,7 @@ class LibraryFunctions():
                             thumb = item[ 'thumbnail' ]
                         else:
                             thumb = None
-                        listitem = self._create([path, item['name'], shortcutType, {"icon": "DefaultAddon.png", "thumb": thumb} ])
+                        listitem = self._create([path, item['name'], shortcutType, {"icon": "DefaultAddon.png", "thumb": "thumb"} ])
 
                         # If this is a plugin, mark that we can browse it
                         if item[ "type" ] == "xbmc.python.pluginsource":
