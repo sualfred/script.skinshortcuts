@@ -630,7 +630,7 @@ class LibraryFunctions():
             listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2)
             listitem.setArt({'icon': displayIcon})
             listitem.setArt({'thumb': thumbnail})
-            listitem.setProperty( "thumbnail", "thumb")
+            listitem.setProperty( "thumbnail", thumbnail)
         else:
             listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2)
             listitem.setArt({'icon': thumbnail})
@@ -1498,7 +1498,7 @@ class LibraryFunctions():
                 # Create a listitem
                 listitem = xbmcgui.ListItem(label=label[ len( label ) - 1 ].replace( "  >", "" ), label2=localItemType)
                 listitem.setArt({'icon': "DefaultShortcut.png"})
-                listitem.setArt({'thumb': thumb[len(thumb) - 1]})
+                listitem.setArt({'thumb': thumbnail[len(thumbnail) - 1]})
 
                 # Build the action
                 if itemType in [ "32010", "32014", "32069" ]:
