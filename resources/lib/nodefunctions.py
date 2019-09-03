@@ -597,7 +597,7 @@ class ShowDialog( xbmcgui.WindowXMLDialog ):
         for item in self.listing :
             listitem = xbmcgui.ListItem(label=item.getLabel(), label2=item.getLabel2())
             listitem.setArt({'icon': item.getProperty("icon")})
-            listitem.setArt({'thumbnail': item.getProperty("thumbnail")})
+            listitem.setArt({'thumb': item.getProperty("thumbnail")})
             listitem.setProperty( "Addon.Summary", item.getLabel2() )
             self.fav_list.addItem( listitem )
 

@@ -629,11 +629,11 @@ class LibraryFunctions():
         if thumbnail is not None:
             listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2)
             listitem.setArt({'icon': displayIcon})
-            listitem.setArt({'thumbnail': thumbnail})
-            listitem.setProperty( "thumbnail", thumbnail)
+            listitem.setArt({'thumb': thumb})
+            listitem.setProperty( "thumbnail", thumb)
         else:
             listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2)
-            listitem.setArt({'icon': thumbnail})
+            listitem.setArt({'icon': thumb})
         listitem.setProperty( "path", item[0] )
         listitem.setProperty( "localizedString", localLabel )
         listitem.setProperty( "shortcutType", shortcutType )
@@ -1498,7 +1498,7 @@ class LibraryFunctions():
                 # Create a listitem
                 listitem = xbmcgui.ListItem(label=label[ len( label ) - 1 ].replace( "  >", "" ), label2=localItemType)
                 listitem.setArt({'icon': "DefaultShortcut.png"})
-                listitem.setArt({'thumbnail': thumbnail[len(thumbnail) - 1]})
+                listitem.setArt({'thumb': thumb[len(thumb) - 1]})
 
                 # Build the action
                 if itemType in [ "32010", "32014", "32069" ]:
@@ -2181,7 +2181,7 @@ class ShowDialog( xbmcgui.WindowXMLDialog ):
         for item in self.listing :
             listitem = xbmcgui.ListItem(label=item.getLabel(), label2=item.getLabel2())
             listitem.setArt({'icon': item.getProperty("icon")})
-            listitem.setArt({'thumbnail': item.getProperty("thumbnail")})
+            listitem.setArt({'thumb': item.getProperty("thumbnail")})
             listitem.setProperty( "Addon.Summary", item.getLabel2() )
             self.fav_list.addItem( listitem )
 
