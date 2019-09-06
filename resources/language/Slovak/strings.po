@@ -508,7 +508,3 @@ msgstr "Nikdy neskrývať PVR odkazy"
 msgctxt "#32121"
 msgid "Share menu between compatible skins"
 msgstr "Zdieľať ponuku medzi kompatibilným vzhľadmi"
-
-msgctxt "#32122"
-msgid "Default widgets"
-msgstr "Predvolené miniaplikácie"

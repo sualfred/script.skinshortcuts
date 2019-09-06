@@ -517,5 +517,5 @@ msgid "Share menu between compatible skins"
 msgstr ""
 
 msgctxt "#32122"
-msgid "Default widgets"
+msgid "Enable debug logging"
 msgstr ""
