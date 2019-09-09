@@ -293,7 +293,7 @@ Another example, it can be useful to know if a widgetPath has a '?' character in
 ## Moving properties to an include using `$PARAM` (KODI 15+)
 
 You can move any `$SKINSHORTCUTS[propertyName]` to an include inside your skin's xml files using `$PARAM[paramName]`.
-For more informations about params : [Use params in includes](http://kodi.wiki/view/Skinning_Manual#Use_params_in_includes).
+For more informations about params : [Use params in includes](https://kodi.wiki/view/Skinning_Manual#Use_params_in_includes).
 
 When using `$PARAM[paramName]` in your skin's xml, it will be automatically replaced by the corresponding `$SKINSHORTCUTS[propertyName]` you set.
 

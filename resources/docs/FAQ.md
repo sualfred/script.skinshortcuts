@@ -1,6 +1,6 @@
 # End User FAQ
 
-There are a number of questions that come up repeatedly with Skin Shortcuts use. Before asking your question in the [Kodi forum for the skin that you are using](http://forum.kodi.tv/forumdisplay.php?fid=67), please check if it has been answered below.
+There are a number of questions that come up repeatedly with Skin Shortcuts use. Before asking your question in the [Kodi forum for the skin that you are using](https://forum.kodi.tv/forumdisplay.php?fid=67), please check if it has been answered below.
 
 * [Where to get help](../../README.md#where-to-get-help---users)
 * [Banned add-on policy](#banned-add-on-policy)
@@ -19,11 +19,11 @@ Skin Shortcuts fully supports Kodi's banned add-on policy. It is only ever teste
 
 If it is not working in any way with any add-on that cannot be discussed on the Kodi forums, you need to find a forum where the add-on in question is supported, and ask your question there.
 
-Please note that if you need to provide a [debug log](http://kodi.wiki/view/Debug_log), we expect you to disable any banned add-ons within Kodi before capturing the log. If there are banned add-ons within the log, you will not receive any support.
+Please note that if you need to provide a [debug log](https://kodi.wiki/view/Debug_log), we expect you to disable any banned add-ons within Kodi before capturing the log. If there are banned add-ons within the log, you will not receive any support.
 
 ## Link to addon shows cached listings
 
-This is a known Kodi issue which we hope will be fixed in an upcoming release - please see [this Trac ticket](http://trac.kodi.tv/ticket/16676) for details.
+This is a known Kodi issue which we hope will be fixed in an upcoming release - please see [this Trac ticket](https://trac.kodi.tv/ticket/16676) for details.
 
 It is possible to trick Kodi into never using a cached version by editing the shortcut. If the shortcut already has a ? anywhere it, add the following to the end:
 
@@ -59,13 +59,13 @@ It is possible to delete any shortcuts to the Kodi settings area. Don't worry, t
 
 Many skins provide alternative access to settings on the shutdown menu. If there is no menu item to bring up the menu, hit 's'.
 
-Otherwise, you can remove the contents of [userdata](http://kodi.wiki/view/Userdata)/addon_data/script.skinshortcuts - this will cause the menu to be reset to default next time you enter the home screen. From there you can get to settings and then restore the contents of the folder.
+Otherwise, you can remove the contents of [userdata](https://kodi.wiki/view/Userdata)/addon_data/script.skinshortcuts - this will cause the menu to be reset to default next time you enter the home screen. From there you can get to settings and then restore the contents of the folder.
 
 ## Cannot set backgrounds
 
 When trying to set a background for a menu item, you may not see the source where your backgrounds are contained in the select dialog.
 
-This occurs when any sources have been added to Kodi's [File Manager](http://kodi.wiki/view/File_manager). To get access to your backgrounds, add the location where they are contained as a source within the file manager.
+This occurs when any sources have been added to Kodi's [File Manager](https://kodi.wiki/view/File_manager). To get access to your backgrounds, add the location where they are contained as a source within the file manager.
 
 ## Changes to script-skinshortcuts-includes.xml are overwritten
 

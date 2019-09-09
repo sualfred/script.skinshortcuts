@@ -100,7 +100,7 @@ Details of how to force Skin Shortcuts to add a link to settings to users menus 
 
 [Read More](./Force%20settings%20link.md)
 
-See also [Getting Started](../started/Getting%20Started.md) notes regarding shortcuts to settings.
+See also [Getting Started](../started/Getting%20Started.md#shortcut-to-settings) notes regarding shortcuts to settings.
 
 ## Provide thumbnails
 
@@ -126,4 +126,4 @@ Details of how to enable and customise the context menu within the management di
 
 [Read More](./Context%20menu.md)
 
-***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)
+***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md)

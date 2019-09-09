@@ -44,9 +44,9 @@ Skin Shortcuts fully supports library nodes, so you should ensure that any defau
 For example, a link to movie titles should be:
 
 `<action>ActivateWindow(10025,videodb://movies/titles/,return)</action>`
-	
+
 rather than
 
 `<action>ActivateWindow(10025,MovieTitles,return)</action>`
 
-***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)
+***Quick links*** - [Readme](../../README.md) - [Getting Started](./started/Getting%20Started.md) - [Advanced Usage](./advanced/Advanced%20Usage.md)

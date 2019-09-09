@@ -19,7 +19,7 @@ By default, Skin Shortcuts provides a large array of available widgets which can
 | `[target]` | Yes | The string that will be assigned to `<property name="widgetTarget">` |
 | `[widgetID]` |  | The unique string you use to identify this widget |
 
-If you are customising the [`<widget-groupings />` groupings](./Custom%20groupings.md), these will be displayed in `<content>widgets</content>`.
+If you are customising the [`<widget-groupings />`](./Custom%20groupings.md#widget-groupings), these will be displayed in `<content>widgets</content>`.
 
 ## Defining widget defaults
 
@@ -59,7 +59,7 @@ Be careful when setting defaults to library nodes - if the user has customised t
 
 To let the user select a widget, include button 312 in your [Management Dialog](../started/Management%20Dialog.md).
 
-You can also use the [Just Select](./Just Select.md#just-select-widgets) method to let the user select a widget and save its properties to skin strings.
+You can also use the [Just Select](./Just%20Select.md#just-select-widgets) method to let the user select a widget and save its properties to skin strings.
 
 #### Let the user select additional widgets
 

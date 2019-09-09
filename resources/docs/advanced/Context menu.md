@@ -34,7 +34,8 @@ Please note, however, that if you include the `<contextmenu />` element in your 
 
 ## Example
 
-```<contextmenu>
+```
+<contextmenu>
 	<!-- Enable context menu on controls 211, 303 and 304 -->
 	<enableon>211</enableon>
 	<enableon>303</enableon>
@@ -43,6 +44,7 @@ Please note, however, that if you include the `<contextmenu />` element in your 
 	<!-- Add enable/disable controls -->
 	<item control="313" condition="String.IsEqual(Container(211).ListItem.Property(skinshortcuts-disabled),False)">Disable</item>
 	<item control="313" condition="String.IsEqual(Container(211).ListItem.Property(skinshortcuts-disabled),True)">Enable</item>
-</contextmenu>```
+</contextmenu>
+```
 
 ***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)
