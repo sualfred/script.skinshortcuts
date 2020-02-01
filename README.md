@@ -1,4 +1,4 @@
-# Skin Shortcuts - 1.0.13
+# Skin Shortcuts - 1.0.20
 
 script.skinshortcuts was written with the intention of making user customizable shortcuts on the home page easier for skinners.
 

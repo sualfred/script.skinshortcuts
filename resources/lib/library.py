@@ -1148,8 +1148,12 @@ class LibraryFunctions():
 
                 if playlist.endswith( '-randomversion.xsp' ):
                     contents = xbmcvfs.File(playlistfile, 'r')
-                    contents_data = contents.read().decode('utf-8')
-                    xmldata = xmltree.fromstring(contents_data.encode('utf-8'))
+                    if sys.version_info.major == 3:
+                        contents_data = contents.read()
+                        xmldata = xmltree.fromstring(contents_data)
+                    else:
+                        contents_data = contents.read().decode('utf-8')
+                        xmldata = xmltree.fromstring(contents_data.encode('utf-8'))
                     for line in xmldata.getiterator():
                         if line.tag == "name":
 
@@ -2033,7 +2037,7 @@ class LibraryFunctions():
                     image = item["file"]
                 if image:
                     if sys.version_info.major == 3:
-                        image = urllib.parse.unquote(image).decode('utf8')
+                        image = urllib.parse.unquote(image)
                     else:
                         image = urllib.unquote(image).decode('utf8')
 
